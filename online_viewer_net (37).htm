@@ -1,0 +1,1531 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>مساعد القسمة للأطفال | تطبيق تفاعلي</title>
+
+  <!-- أيقونة الصفحة (اختياري) -->
+  <link rel="icon" href="logo.png" type="image/png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#f6f8ff;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:rgba(17,24,39,.10);
+      --shadow: 0 12px 30px rgba(16,24,40,.10);
+
+      --a:#5b8cff;
+      --b:#22c55e;
+      --c:#f59e0b;
+      --d:#ef4444;
+      --e:#a855f7;
+      --soft:#eef2ff;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:"Tajawal",system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:
+        radial-gradient(900px 500px at 80% -10%, rgba(91,140,255,.22), transparent 55%),
+        radial-gradient(900px 500px at 10% 10%, rgba(168,85,247,.18), transparent 55%),
+        radial-gradient(900px 500px at 50% 110%, rgba(34,197,94,.16), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+    }
+
+    .wrap{ max-width:1100px; margin:0 auto; padding:18px 16px 90px; }
+
+    header{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:14px 14px;
+      background:rgba(255,255,255,.75);
+      backdrop-filter: blur(10px);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      position:sticky; top:10px; z-index:50;
+      flex-direction: row-reverse; /* العنوان+الشعار جهة اليمين */
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px; min-width:260px;
+      flex-direction: row-reverse; /* الشعار يمين النص */
+    }
+    .logo{
+      width:46px; height:46px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(91,140,255,.95), rgba(168,85,247,.95));
+      display:grid; place-items:center;
+      box-shadow: 0 12px 25px rgba(91,140,255,.25);
+      overflow:hidden;
+      position:relative;
+      border:1px solid rgba(255,255,255,.55);
+    }
+    .logo img{
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+      background:#fff;
+    }
+    .logo .fallback{
+      display:none;
+      color:#fff; font-weight:900; font-size:18px;
+    }
+    .titleBlock{ line-height:1.1; text-align:right; }
+    .titleBlock h1{ margin:0; font-size:18px; }
+    .titleBlock p{ margin:4px 0 0; font-size:12px; color:var(--muted); }
+
+    .topActions{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-start; }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px; border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.7);
+      font-size:12px; color:var(--muted);
+      user-select:none;
+    }
+    .stars{ color:#f59e0b; font-weight:800; }
+    .btn{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.85);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+      transition:.15s transform, .15s background, .15s box-shadow;
+      display:inline-flex; align-items:center; gap:8px;
+      color:var(--text);
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 10px 20px rgba(16,24,40,.08); }
+    .btn:active{ transform: translateY(0px); }
+    .btn.primary{ background: linear-gradient(135deg, rgba(91,140,255,.95), rgba(168,85,247,.90)); color:#fff; border-color:transparent; }
+    .btn.good{ background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.25); }
+    .btn.warn{ background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.25); }
+    .btn.bad{ background: rgba(239,68,68,.10); border-color: rgba(239,68,68,.25); }
+
+    nav{
+      margin-top:14px;
+      display:flex; gap:10px; flex-wrap:wrap;
+      padding:10px;
+      background: rgba(255,255,255,.70);
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow: var(--shadow);
+      justify-content:flex-end;
+    }
+    .tab{
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.85);
+      cursor:pointer;
+      font-weight:800;
+      display:inline-flex; gap:8px; align-items:center;
+    }
+    .tab.active{
+      background: linear-gradient(135deg, rgba(91,140,255,.95), rgba(168,85,247,.90));
+      color:#fff; border-color:transparent;
+    }
+
+    main{ margin-top:14px; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      header{ position:static; }
+    }
+
+    .card{
+      background: rgba(255,255,255,.85);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow: var(--shadow);
+      padding:14px;
+    }
+    .card h2{ margin:0 0 10px; font-size:16px; }
+    .card h3{ margin:0 0 10px; font-size:14px; color:var(--text); }
+    .muted{ color:var(--muted); }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .field{
+      display:flex; flex-direction:column; gap:6px;
+      min-width: 150px;
+      flex:1;
+    }
+    label{ font-size:12px; color:var(--muted); font-weight:700; }
+    input, select{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.95);
+      outline:none;
+      font-family:inherit;
+      font-weight:700;
+    }
+    input:focus, select:focus{
+      border-color: rgba(91,140,255,.55);
+      box-shadow: 0 0 0 4px rgba(91,140,255,.15);
+    }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px; border-radius:14px;
+      background: rgba(91,140,255,.10);
+      border:1px solid rgba(91,140,255,.25);
+      font-weight:800;
+    }
+
+    .terms{
+      display:grid; grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    @media (max-width:520px){ .terms{ grid-template-columns: 1fr; } }
+
+    .term{
+      padding:12px;
+      border-radius:16px;
+      border:1px dashed rgba(17,24,39,.18);
+      background: rgba(255,255,255,.7);
+    }
+    .term strong{ display:block; margin-bottom:4px; }
+    .term .ex{ font-size:12px; color:var(--muted); }
+
+    .eq{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:12px;
+      border-radius:16px;
+      background: rgba(34,197,94,.08);
+      border:1px solid rgba(34,197,94,.22);
+      margin-top:10px;
+      font-weight:900;
+      flex-wrap:wrap;
+    }
+    .eq .big{ font-size:18px; }
+    .hint{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      background: rgba(245,158,11,.10);
+      border:1px solid rgba(245,158,11,.22);
+      font-weight:700;
+      line-height:1.7;
+    }
+
+    .buckets{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+    .bucket{
+      border-radius:18px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.75);
+      padding:10px;
+      min-height:120px;
+      position:relative;
+      overflow:hidden;
+    }
+    .bucketHead{
+      display:flex; justify-content:space-between; align-items:center;
+      gap:8px;
+      margin-bottom:8px;
+    }
+    .bucketTitle{
+      font-weight:900; font-size:13px;
+      display:flex; align-items:center; gap:6px;
+    }
+    .countBadge{
+      font-weight:900; font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: rgba(91,140,255,.10);
+      border:1px solid rgba(91,140,255,.22);
+    }
+    .dropzone{
+      min-height:80px;
+      border-radius:14px;
+      border:1px dashed rgba(17,24,39,.22);
+      padding:8px;
+      display:flex; flex-wrap:wrap; gap:6px;
+      align-content:flex-start;
+    }
+    .dropzone.dragover{
+      border-color: rgba(91,140,255,.70);
+      background: rgba(91,140,255,.08);
+    }
+
+    .itemsTray{
+      border-radius:18px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.75);
+      padding:10px;
+    }
+    .trayHead{
+      display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+    .items{
+      min-height:76px;
+      border-radius:14px;
+      border:1px dashed rgba(17,24,39,.22);
+      padding:8px;
+      display:flex; flex-wrap:wrap; gap:6px;
+      align-content:flex-start;
+    }
+    .item{
+      width:34px; height:34px;
+      border-radius:12px;
+      border:1px solid rgba(17,24,39,.12);
+      background: rgba(255,255,255,.95);
+      display:grid; place-items:center;
+      cursor:grab;
+      user-select:none;
+      font-size:18px;
+      box-shadow: 0 6px 14px rgba(16,24,40,.06);
+    }
+    .item:active{ cursor:grabbing; transform: scale(.98); }
+
+    .feedback{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.75);
+      line-height:1.8;
+      font-weight:700;
+    }
+    .feedback.good{ border-color: rgba(34,197,94,.28); background: rgba(34,197,94,.10); }
+    .feedback.bad{ border-color: rgba(239,68,68,.25); background: rgba(239,68,68,.08); }
+
+    .quizBox{
+      margin-top:10px;
+      padding:12px;
+      border-radius:18px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.75);
+    }
+    .qTop{
+      display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .qText{
+      font-weight:900;
+      font-size:16px;
+      line-height:1.7;
+    }
+    .options{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width:520px){ .options{ grid-template-columns: 1fr; } }
+    .opt{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.95);
+      cursor:pointer;
+      font-weight:900;
+      font-size:16px;
+      transition:.15s transform;
+    }
+    .opt:hover{ transform: translateY(-1px); }
+    .opt.correct{ background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.30); }
+    .opt.wrong{ background: rgba(239,68,68,.10); border-color: rgba(239,68,68,.28); }
+
+    .progress{
+      height:10px; width:100%;
+      background: rgba(17,24,39,.08);
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid var(--border);
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(245,158,11,.95), rgba(34,197,94,.95));
+      border-radius:999px;
+      transition: width .25s ease;
+    }
+
+    .hidden{ display:none !important; }
+
+    /* خطوات الطرح المتكرر */
+    .stepsBox{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.75);
+    }
+    .steps{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top:8px;
+      max-height: 220px;
+      overflow:auto;
+      padding-left:4px;
+    }
+    .stepLine{
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px dashed rgba(17,24,39,.18);
+      background: rgba(255,255,255,.88);
+      font-weight:900;
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    footer{
+      position:fixed;
+      left:0; right:0; bottom:0;
+      background: rgba(255,255,255,.85);
+      border-top:1px solid var(--border);
+      backdrop-filter: blur(10px);
+      padding:10px 14px;
+      font-size:12px;
+      color:var(--muted);
+      display:flex; justify-content:center;
+      z-index:60;
+    }
+
+    /* Print */
+    @media print{
+      header, nav, footer, .noPrint{ display:none !important; }
+      body{ background:#fff !important; }
+      .wrap{ padding:0 !important; max-width:100% !important; }
+      .card{ box-shadow:none !important; border:1px solid #ddd !important; background:#fff !important; }
+      #printArea{ display:block !important; }
+    }
+    #printArea{ display:none; }
+    .cert{
+      padding:18px;
+      border:2px solid #111;
+      border-radius:16px;
+    }
+    .certHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .certHead img{
+      width:72px; height:72px;
+      border-radius:16px;
+      border:1px solid #ddd;
+      object-fit:cover;
+      background:#fff;
+    }
+    .cert h2{ font-size:22px; margin:0; }
+    .cert .line{ margin:8px 0; font-size:16px; font-weight:700; }
+    .cert .sig{ margin-top:16px; font-size:14px; color:#111; }
+
+    .toast{
+      position:fixed; top:16px; left:16px;
+      background: rgba(17,24,39,.92);
+      color:#fff;
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:800;
+      box-shadow: 0 20px 40px rgba(0,0,0,.25);
+      opacity:0;
+      transform: translateY(-10px);
+      transition:.2s;
+      z-index:1000;
+      max-width: 360px;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="toast" id="toast"></div>
+
+  <div class="wrap">
+    <header>
+      <div class="topActions">
+        <span class="chip"><span>⭐ نجومي:</span> <span class="stars" id="starsChip">٠</span></span>
+        <button class="btn good noPrint" id="btnSpeak">🔊 اقرأ التعليمات</button>
+        <button class="btn primary noPrint" id="btnPrint">🖨️ شهادة/طباعة</button>
+      </div>
+
+      <div class="brand">
+        <div class="logo" title="الشعار (ثابت)">
+          <img src="logo.png" alt="logo"
+               onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='grid';">
+          <span class="fallback" id="logoFallback">÷</span>
+        </div>
+        <div class="titleBlock">
+          <h1>مساعد القسمة للأطفال</h1>
+          <p>تطبيق تفاعلي لفهم القسمة: توزيع • مجموعات • طرح متكرر • تدريب • إنجاز ⭐</p>
+        </div>
+      </div>
+    </header>
+
+    <nav class="noPrint">
+      <button class="tab active" data-tab="learn">📘 افهم القسمة</button>
+      <button class="tab" data-tab="play">🧩 ملعب القسمة</button>
+      <button class="tab" data-tab="quiz">🎯 تدرّب</button>
+      <button class="tab" data-tab="my">🏅 إنجازي</button>
+    </nav>
+
+    <main>
+      <!-- TAB: LEARN -->
+      <section id="tab-learn">
+        <div class="grid">
+          <div class="card">
+            <h2>الفكرة ببساطة</h2>
+            <p class="muted" style="margin-top:0; line-height:1.8">
+              القسمة تعني: <b>توزيع الأشياء بالتساوي</b> أو <b>تكوين مجموعات متساوية</b>.
+              سنفهمها بالخطوات ثم نجربها باللعب ✨
+            </p>
+
+            <div class="terms">
+              <div class="term">
+                <strong>المقسوم</strong>
+                <div class="ex">هو عدد الأشياء كلها (مثل: ٢٤ 🍬)</div>
+              </div>
+              <div class="term">
+                <strong>المقسوم عليه</strong>
+                <div class="ex">هو عدد المجموعات/الأشخاص أو حجم المجموعة (مثل: ٦)</div>
+              </div>
+              <div class="term">
+                <strong>ناتج القسمة</strong>
+                <div class="ex">كم لكل مجموعة؟ أو كم مجموعة؟</div>
+              </div>
+              <div class="term">
+                <strong>الباقي</strong>
+                <div class="ex">أشياء لا يمكن توزيعها بالتساوي (إن وُجد)</div>
+              </div>
+            </div>
+
+            <div class="hint">
+              ✨ تذكّر/ي: <b>القسمة عكس الضرب</b>  
+              إذا كان: ٢٤ ÷ ٦ = ٤  
+              إذن: ٦ × ٤ = ٢٤ ✅
+            </div>
+
+            <div class="hint" style="background:rgba(91,140,255,.08); border-color:rgba(91,140,255,.22)">
+              🧮 <b>القسمة بالطرح المتكرر</b> تعني: نطرح المقسوم عليه من المقسوم مرارًا،
+              وعدد مرات الطرح = <b>الناتج</b>، وما يتبقى = <b>الباقي</b>.
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>جرّب/ي مثال سريع</h2>
+            <div class="row">
+              <div class="field">
+                <label>المقسوم (عدد الأشياء)</label>
+                <input id="learnA" type="number" min="0" max="200" value="24">
+              </div>
+              <div class="field">
+                <label>المقسوم عليه</label>
+                <input id="learnB" type="number" min="1" max="20" value="6">
+              </div>
+              <div class="field" style="min-width:220px; flex:1.4">
+                <label>طريقة الشرح</label>
+                <select id="learnMode">
+                  <option value="both" selected>توزيع + طرح متكرر</option>
+                  <option value="share">توزيع بالتساوي</option>
+                  <option value="subtract">طرح متكرر</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <button class="btn primary" id="btnExplain">✨ اشرح</button>
+              <button class="btn" id="btnCheckMul">🔁 تحقق بالضرب</button>
+              <button class="btn warn" id="btnSubSteps">🧮 خطوات الطرح المتكرر</button>
+            </div>
+
+            <div class="eq" id="learnEq">
+              <span class="big" id="learnEqText">٢٤ ÷ ٦ = ٤ والباقي ٠</span>
+              <span class="pill" id="learnPill">توزيع + طرح</span>
+            </div>
+
+            <div class="feedback" id="learnExplain">
+              اضغط/ي <b>اشرح</b> لعرض الخطوات بطريقة مناسبة للأطفال.
+            </div>
+
+            <div class="stepsBox" id="subStepsBox">
+              <div style="font-weight:900">🧮 خطوات الطرح المتكرر (تُحدّث حسب الأرقام)</div>
+              <div class="muted" id="subStepsSummary" style="margin-top:4px">
+                اضغط/ي زر <b>خطوات الطرح المتكرر</b> لعرض الخطوات.
+              </div>
+              <div class="steps" id="subStepsList"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: PLAY -->
+      <section id="tab-play" class="hidden">
+        <div class="grid">
+          <div class="card">
+            <h2>إعداد اللعبة</h2>
+            <div class="row">
+              <div class="field">
+                <label>طريقة اللعب</label>
+                <select id="playType">
+                  <option value="share">توزيع بالتساوي (كم لكل مجموعة؟)</option>
+                  <option value="group">تكوين مجموعات (كم مجموعة؟)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>عدد العناصر (المقسوم) — أقصى ٦٠</label>
+                <input id="playA" type="number" min="0" max="60" value="24">
+              </div>
+              <div class="field">
+                <label id="playBLabel">المقسوم عليه</label>
+                <input id="playB" type="number" min="1" max="12" value="6">
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <button class="btn primary" id="btnStartPlay">🚀 ابدأ</button>
+              <button class="btn" id="btnAutoDistribute">🤖 وزّع تلقائياً</button>
+              <button class="btn good" id="btnCheckPlay">✅ تحقق</button>
+              <button class="btn bad" id="btnResetPlay">🔄 إعادة</button>
+            </div>
+
+            <div class="hint" style="margin-top:10px">
+              👇 اسحب/ي 🍬 من الصندوق إلى المجموعات.  
+              الهدف: <b>تساوي المجموعات</b> أو <b>تساوي حجم المجموعة</b> حسب نوع اللعب.
+            </div>
+
+            <div class="eq" id="playEq">
+              <span class="big" id="playEqText">—</span>
+              <span class="pill" id="playEqPill">ملعب القسمة</span>
+            </div>
+
+            <div class="feedback" id="playFeedback">
+              اضغط/ي <b>ابدأ</b> لبدء اللعب.
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>الملعب</h2>
+
+            <div class="itemsTray">
+              <div class="trayHead">
+                <div class="bucketTitle">🎒 صندوق العناصر</div>
+                <span class="countBadge">المتبقي: <span id="trayCount">٠</span></span>
+              </div>
+              <div class="items dropzone" id="tray" aria-label="صندوق العناصر"></div>
+            </div>
+
+            <div class="buckets" id="buckets"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: QUIZ -->
+      <section id="tab-quiz" class="hidden">
+        <div class="grid">
+          <div class="card">
+            <h2>اختر/ي المستوى</h2>
+            <div class="row">
+              <div class="field">
+                <label>المستوى</label>
+                <select id="level">
+                  <option value="easy">سهل (٢،٥،١٠)</option>
+                  <option value="mid">متوسط (٣،٤،٦،٨)</option>
+                  <option value="hard">متقدم (٧–١٢ + بواقي)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>نوع الأسئلة</label>
+                <select id="qType">
+                  <option value="mix">متنوع</option>
+                  <option value="fact">مباشر (÷)</option>
+                  <option value="word">مسألة لفظية</option>
+                  <option value="remainder">مع الباقي</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>اسم المتعلم/ة (للشهادة)</label>
+                <input id="studentName" type="text" placeholder="مثال: نور أو راشد">
+              </div>
+            </div>
+
+            <div class="row" style="margin-top:10px">
+              <button class="btn primary" id="btnNewQ">🎲 سؤال جديد</button>
+              <button class="btn good" id="btnHint">💡 تلميح</button>
+              <button class="btn" id="btnReadQ">🔊 اقرأ السؤال</button>
+            </div>
+
+            <div class="quizBox" id="quizBox">
+              <div class="qTop">
+                <div class="pill">📌 النقاط: <span id="score">٠</span></div>
+                <div class="pill">🔥 سلسلة صحيحة: <span id="streak">٠</span></div>
+              </div>
+              <div class="progress"><div class="bar" id="starBar"></div></div>
+
+              <div class="qText" id="qText" style="margin-top:10px">اضغط/ي <b>سؤال جديد</b> للبدء.</div>
+              <div class="options" id="options"></div>
+
+              <div class="feedback" id="qFeedback">بعد الإجابة سيتم شرح الحل خطوة بخطوة ✨</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>كيف أفكر؟ (خطوات ذكية)</h2>
+            <div class="term">
+              <strong>١) اقرأ المطلوب</strong>
+              <div class="ex">هل يريد: كم لكل واحد؟ أم كم مجموعة؟</div>
+            </div>
+            <div class="term" style="margin-top:10px">
+              <strong>٢) استخدم الضرب للتحقق</strong>
+              <div class="ex">المقسوم عليه × الناتج = المقسوم (أو أقل منه إذا كان هناك باقي)</div>
+            </div>
+            <div class="term" style="margin-top:10px">
+              <strong>٣) استخدم الطرح المتكرر عند الحاجة</strong>
+              <div class="ex">اطرح المقسوم عليه مرارًا حتى لا تستطيع الطرح. عدد مرات الطرح = الناتج.</div>
+            </div>
+            <div class="hint" style="margin-top:12px">
+              ⭐ كل إجابة صحيحة = نجمة  
+              ⭐ عند جمع نجوم كافية يمكن طباعة الشهادة من زر الطباعة.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB: MY -->
+      <section id="tab-my" class="hidden">
+        <div class="grid">
+          <div class="card">
+            <h2>ملخص الإنجاز</h2>
+            <div class="row">
+              <span class="pill">⭐ النجوم: <span id="myStars">٠</span></span>
+              <span class="pill">🎯 أسئلة محلولة: <span id="mySolved">٠</span></span>
+              <span class="pill">🏆 أفضل سلسلة: <span id="myBest">٠</span></span>
+            </div>
+
+            <div class="hint" style="margin-top:10px">
+              يمكن حفظ التقدم كملف JSON أو طباعته كشهادة.
+            </div>
+
+            <div class="row noPrint" style="margin-top:10px">
+              <button class="btn primary" id="btnExport">⬇️ تصدير JSON</button>
+              <button class="btn" id="btnImport">⬆️ استيراد JSON</button>
+              <button class="btn warn" id="btnResetAll">🧹 تصفير التقدم</button>
+            </div>
+            <input type="file" id="importInput" accept="application/json" class="hidden">
+
+            <div class="card" style="margin-top:12px; background:rgba(255,255,255,.72)">
+              <h3>بيانات الشهادة (اختياري)</h3>
+              <div class="row">
+                <div class="field">
+                  <label>الصف/الفصل (اختياري)</label>
+                  <input id="className" type="text" placeholder="مثال: ثالث/١">
+                </div>
+                <div class="field">
+                  <label>ملاحظة قصيرة (اختياري)</label>
+                  <input id="note" type="text" placeholder="مثال: أداء رائع في القسمة!">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>أهداف صغيرة تساعد المتعلم/ة</h2>
+            <div class="term">
+              <strong>🎯 هدف اليوم</strong>
+              <div class="ex">حل ٥ أسئلة + تجربة الملعب مرة واحدة.</div>
+            </div>
+            <div class="term" style="margin-top:10px">
+              <strong>🧩 هدف الأسبوع</strong>
+              <div class="ex">إتقان القسمة على ٢ و٥ و١٠ مع التحقق بالضرب.</div>
+            </div>
+            <div class="term" style="margin-top:10px">
+              <strong>💪 تحدي الباقي</strong>
+              <div class="ex">فهم معنى الباقي ولماذا هو أقل من المقسوم عليه.</div>
+            </div>
+
+            <div class="hint" style="margin-top:12px">
+              👩‍🏫👨‍🏫 ملاحظة للمعلم/ة: اترك/ي المتعلم/ة يجرّب/تجرّب أولًا ثم ناقش/ي:
+              “كيف عرفت الناتج؟ ماذا حدث للباقي؟”
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRINT AREA -->
+      <section id="printArea">
+        <div class="card">
+          <div class="cert">
+            <div class="certHead">
+              <img src="logo.png" alt="logo" onerror="this.style.display='none'">
+              <h2>شهادة إنجاز — مساعد القسمة</h2>
+            </div>
+
+            <div class="line">اسم المتعلم/ة: <span id="pName">—</span></div>
+            <div class="line">الصف/الفصل: <span id="pClass">—</span></div>
+            <div class="line">النجوم: <span id="pStars">—</span></div>
+            <div class="line">الأسئلة المحلولة: <span id="pSolved">—</span></div>
+            <div class="line">التاريخ: <span id="pDate">—</span></div>
+            <div class="line">ملاحظة: <span id="pNote">—</span></div>
+
+            <div class="sig">
+              توقيع المعلم/ة: ______________________
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ✅ التذييل بدون كلمة "تذييل ثابت" -->
+  <footer>
+    <span>© أ/ فاطمة هزازي ، ملتقى معلمي ومعلمات الرياضيات ، ملتقى التعليم التفاعلي</span>
+  </footer>
+
+<script>
+/* =========================
+   Helpers
+========================= */
+const $ = (s)=>document.querySelector(s);
+const $$ = (s)=>Array.from(document.querySelectorAll(s));
+function clearNode(node){ while(node.firstChild) node.removeChild(node.firstChild); }
+
+const AR_DIGITS = ["٠","١","٢","٣","٤","٥","٦","٧","٨","٩"];
+function toArabicDigits(val){
+  const str = String(val);
+  return str.replace(/\d/g, d => AR_DIGITS[Number(d)]);
+}
+function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+function randInt(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 2100);
+}
+
+/* =========================
+   Persistence
+========================= */
+const KEY = "divisionHelperProgress_v3";
+function defaultProgress(){
+  return {
+    stars:0,
+    score:0,
+    solved:0,
+    bestStreak:0,
+    lastStudent:"",
+    lastClass:"",
+    note:""
+  };
+}
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return defaultProgress();
+    const p = JSON.parse(raw);
+    return { ...defaultProgress(), ...p };
+  }catch(e){
+    return defaultProgress();
+  }
+}
+function saveProgress(){
+  localStorage.setItem(KEY, JSON.stringify(progress));
+  syncProgressUI();
+}
+let progress = loadProgress();
+
+/* =========================
+   Tabs
+========================= */
+function showTab(tab){
+  $$(".tab").forEach(b=>b.classList.toggle("active", b.dataset.tab===tab));
+  $("#tab-learn").classList.toggle("hidden", tab!=="learn");
+  $("#tab-play").classList.toggle("hidden", tab!=="play");
+  $("#tab-quiz").classList.toggle("hidden", tab!=="quiz");
+  $("#tab-my").classList.toggle("hidden", tab!=="my");
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+$$(".tab").forEach(b=>b.addEventListener("click", ()=>showTab(b.dataset.tab)));
+
+/* =========================
+   Speech (Arabic)
+========================= */
+function speak(text){
+  if(!("speechSynthesis" in window)) return toast("ميزة القراءة غير مدعومة في هذا المتصفح.");
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ar-SA";
+  u.rate = 1.0;
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+$("#btnSpeak").addEventListener("click", ()=>{
+  speak("مرحبًا! هذا مساعد القسمة. ابدأ بفتح تبويب افهم القسمة، ثم جرّب ملعب القسمة، وبعدها انتقل إلى التدريب لتحصل على نجوم وشهادة.");
+});
+
+/* =========================
+   Division helpers
+========================= */
+function computeDivision(a,b){
+  if(b<=0) return {q:0, r:a};
+  const q = Math.floor(a/b);
+  const r = a - q*b;
+  return {q,r};
+}
+function buildSubtractionSteps(a,b,limit=18){
+  const {q,r} = computeDivision(a,b);
+  let cur = a;
+  const n = Math.min(q, limit);
+  const lines = [];
+  for(let i=1; i<=n; i++){
+    const next = cur - b;
+    lines.push({i, cur, next});
+    cur = next;
+  }
+  const truncated = q > limit;
+  return {q,r, lines, truncated};
+}
+function renderSubStepsBox(a,b){
+  const {q,r, lines, truncated} = buildSubtractionSteps(a,b,18);
+  $("#subStepsSummary").innerHTML =
+    `عدد مرات الطرح = <b>${toArabicDigits(q)}</b>، والباقي = <b>${toArabicDigits(r)}</b>.`;
+  const list = $("#subStepsList");
+  clearNode(list);
+
+  if(b<=0){
+    const d = document.createElement("div");
+    d.className="stepLine";
+    d.textContent = "أدخل/ي مقسوم عليه صحيح.";
+    list.appendChild(d);
+    return;
+  }
+
+  if(q===0){
+    const d = document.createElement("div");
+    d.className="stepLine";
+    d.textContent = `لا يمكن طرح ${toArabicDigits(b)} من ${toArabicDigits(a)} حتى مرة واحدة، إذن الناتج ٠ والباقي ${toArabicDigits(a)}.`;
+    list.appendChild(d);
+    return;
+  }
+
+  lines.forEach(s=>{
+    const d = document.createElement("div");
+    d.className="stepLine";
+    d.textContent = `الخطوة ${toArabicDigits(s.i)}: ${toArabicDigits(s.cur)} − ${toArabicDigits(b)} = ${toArabicDigits(s.next)}`;
+    list.appendChild(d);
+  });
+
+  if(truncated){
+    const d = document.createElement("div");
+    d.className="stepLine";
+    d.textContent = "… تم اختصار الخطوات (الأرقام كبيرة).";
+    list.appendChild(d);
+  }
+
+  const last = document.createElement("div");
+  last.className="stepLine";
+  last.textContent = `✅ النتيجة: ${toArabicDigits(a)} ÷ ${toArabicDigits(b)} = ${toArabicDigits(q)} والباقي ${toArabicDigits(r)}.`;
+  list.appendChild(last);
+}
+
+function buildSubBoxHtml(a,b){
+  const {q,r, lines, truncated} = buildSubtractionSteps(a,b,10);
+  const items = lines.map(s =>
+    `<div class="stepLine">الخطوة ${toArabicDigits(s.i)}: ${toArabicDigits(s.cur)} − ${toArabicDigits(b)} = ${toArabicDigits(s.next)}</div>`
+  ).join("");
+  const more = truncated ? `<div class="stepLine">… تم اختصار بقية الخطوات</div>` : "";
+  return `
+    <div class="stepsBox">
+      <div style="font-weight:900">🧮 القسمة بالطرح المتكرر</div>
+      <div class="muted" style="margin-top:4px">
+        عدد مرات الطرح = <b>${toArabicDigits(q)}</b>، والباقي = <b>${toArabicDigits(r)}</b>.
+      </div>
+      <div class="steps">${items}${more}</div>
+    </div>
+  `;
+}
+
+/* =========================
+   LEARN
+========================= */
+function updateLearnEq(){
+  const a = clamp(Number($("#learnA").value||0),0,9999);
+  const b = clamp(Number($("#learnB").value||1),1,9999);
+  const {q,r} = computeDivision(a,b);
+  $("#learnEqText").textContent = `${toArabicDigits(a)} ÷ ${toArabicDigits(b)} = ${toArabicDigits(q)} والباقي ${toArabicDigits(r)}`;
+}
+$("#learnA").addEventListener("input", ()=>{ updateLearnEq(); });
+$("#learnB").addEventListener("input", ()=>{ updateLearnEq(); });
+
+$("#btnExplain").addEventListener("click", ()=>{
+  const a = clamp(Number($("#learnA").value||0),0,200);
+  const b = clamp(Number($("#learnB").value||1),1,20);
+  const mode = $("#learnMode").value;
+  const {q,r} = computeDivision(a,b);
+
+  const parts = [];
+  $("#learnPill").textContent = (mode==="subtract") ? "طرح متكرر" : (mode==="share") ? "توزيع" : "توزيع + طرح";
+
+  parts.push(`🔹 لدينا ${toArabicDigits(a)} عنصرًا ونقسمها على ${toArabicDigits(b)}.`);
+  parts.push(`🔹 الهدف: معرفة الناتج والباقي إن وُجد.`);
+
+  if(mode==="share" || mode==="both"){
+    parts.push(`✅ بالتوزيع: إذا وزّعنا ${toArabicDigits(a)} بالتساوي على ${toArabicDigits(b)} مجموعات، يصبح في كل مجموعة ${toArabicDigits(q)}.`);
+    parts.push(r>0 ? `ويبقى ${toArabicDigits(r)} عنصرًا (هذا هو الباقي).` : `ولا يتبقى شيء، إذن الباقي ٠.`);
+  }
+
+  if(mode==="subtract" || mode==="both"){
+    parts.push(`✅ بالطرح المتكرر: نطرح ${toArabicDigits(b)} مرة تلو الأخرى حتى لا نستطيع الطرح.`);
+    parts.push(`عدد مرات الطرح = ${toArabicDigits(q)}، والمتبقي = ${toArabicDigits(r)}.`);
+  }
+
+  parts.push(`🔁 التحقق بالضرب: ${toArabicDigits(b)} × ${toArabicDigits(q)} + ${toArabicDigits(r)} = ${toArabicDigits(b*q + r)}.`);
+
+  $("#learnExplain").innerHTML = parts.join("<br>");
+  updateLearnEq();
+  renderSubStepsBox(a,b);
+});
+
+$("#btnCheckMul").addEventListener("click", ()=>{
+  const a = clamp(Number($("#learnA").value||0),0,200);
+  const b = clamp(Number($("#learnB").value||1),1,20);
+  const {q,r} = computeDivision(a,b);
+  const check = b*q + r;
+  const ok = (check===a);
+  $("#learnExplain").classList.remove("good","bad");
+  $("#learnExplain").classList.add(ok ? "good" : "bad");
+  $("#learnExplain").innerHTML =
+    ok
+    ? `✅ تحقق صحيح: ${toArabicDigits(b)}×${toArabicDigits(q)} + ${toArabicDigits(r)} = ${toArabicDigits(a)}`
+    : `⚠️ تحقق غير مطابق: راجع/ي الأرقام المدخلة.`;
+});
+
+$("#btnSubSteps").addEventListener("click", ()=>{
+  const a = clamp(Number($("#learnA").value||0),0,200);
+  const b = clamp(Number($("#learnB").value||1),1,20);
+  renderSubStepsBox(a,b);
+  toast("تم عرض خطوات الطرح المتكرر 🧮");
+});
+
+/* =========================
+   PLAY
+========================= */
+let playState = {
+  type:"share",
+  a:24,
+  b:6,
+  buckets:[],
+  items:[],
+  started:false
+};
+
+function makeItem(id){
+  const el = document.createElement("div");
+  el.className = "item";
+  el.textContent = "🍬";
+  el.draggable = true;
+  el.dataset.id = String(id);
+  el.addEventListener("dragstart", (e)=>{
+    e.dataTransfer.setData("text/plain", String(id));
+  });
+  return el;
+}
+
+function attachDropHandlers(zone, onDrop){
+  zone.addEventListener("dragover", (e)=>{ e.preventDefault(); zone.classList.add("dragover"); });
+  zone.addEventListener("dragleave", ()=>zone.classList.remove("dragover"));
+  zone.addEventListener("drop", (e)=>{
+    e.preventDefault();
+    zone.classList.remove("dragover");
+    const id = e.dataTransfer.getData("text/plain");
+    if(!id) return;
+    onDrop(id, zone);
+  });
+}
+
+function updatePlayEq(){
+  if(!playState.started){
+    $("#playEqText").textContent = "—";
+    return;
+  }
+  const a = playState.a, b = playState.b;
+  const {q,r} = computeDivision(a,b);
+
+  if(playState.type==="share"){
+    $("#playEqText").textContent = `${toArabicDigits(a)} ÷ ${toArabicDigits(b)} = ${toArabicDigits(q)} والباقي ${toArabicDigits(r)}`;
+    $("#playEqPill").textContent = "توزيع بالتساوي";
+  }else{
+    $("#playEqText").textContent = `${toArabicDigits(a)} ÷ ${toArabicDigits(b)} = ${toArabicDigits(q)} مجموعات والباقي ${toArabicDigits(r)}`;
+    $("#playEqPill").textContent = "تكوين مجموعات";
+  }
+}
+
+function updateBucketCounts(){
+  $("#trayCount").textContent = toArabicDigits($("#tray").children.length);
+  $$("#buckets .bucket").forEach(bucket=>{
+    const dz = bucket.querySelector(".dropzone");
+    const cnt = dz ? dz.children.length : 0;
+    bucket.querySelector(".cnt").textContent = toArabicDigits(cnt);
+  });
+  updatePlayEq();
+}
+
+function setupPlay(){
+  playState.type = $("#playType").value;
+  playState.a = clamp(Number($("#playA").value||0),0,60);
+  playState.b = clamp(Number($("#playB").value||1),1,12);
+  playState.started = true;
+
+  $("#playBLabel").textContent =
+    playState.type==="share"
+    ? "عدد المجموعات/الأشخاص (المقسوم عليه)"
+    : "حجم المجموعة (المقسوم عليه)";
+
+  clearNode($("#tray"));
+  clearNode($("#buckets"));
+
+  playState.items = [];
+  for(let i=1;i<=playState.a;i++){
+    const it = makeItem(i);
+    playState.items.push(it);
+    $("#tray").appendChild(it);
+  }
+
+  const bucketsEl = $("#buckets");
+  playState.buckets = [];
+
+  let bucketCount = (playState.type==="share") ? playState.b : Math.max(1, Math.floor(playState.a / playState.b) + 1);
+  bucketCount = clamp(bucketCount, 1, 12);
+
+  for(let i=0;i<bucketCount;i++){
+    const card = document.createElement("div");
+    card.className = "bucket";
+    const head = document.createElement("div");
+    head.className = "bucketHead";
+
+    const title = document.createElement("div");
+    title.className = "bucketTitle";
+    title.innerHTML = (playState.type==="share")
+      ? `👥 مجموعة ${toArabicDigits(i+1)}`
+      : `📦 مجموعة ${toArabicDigits(i+1)}`;
+
+    const badge = document.createElement("div");
+    badge.className = "countBadge";
+    badge.innerHTML = `داخلها: <span class="cnt">٠</span>`;
+
+    head.appendChild(title);
+    head.appendChild(badge);
+
+    const dz = document.createElement("div");
+    dz.className = "dropzone";
+    dz.dataset.bucket = String(i);
+
+    attachDropHandlers(dz, (id)=>{
+      const item = playState.items.find(x=>x.dataset.id===String(id));
+      if(!item) return;
+      dz.appendChild(item);
+      updateBucketCounts();
+    });
+
+    card.appendChild(head);
+    card.appendChild(dz);
+    bucketsEl.appendChild(card);
+
+    playState.buckets.push({dz, badge});
+  }
+
+  attachDropHandlers($("#tray"), (id)=>{
+    const item = playState.items.find(x=>x.dataset.id===String(id));
+    if(!item) return;
+    $("#tray").appendChild(item);
+    updateBucketCounts();
+  });
+
+  updateBucketCounts();
+  updatePlayEq();
+  $("#playFeedback").className = "feedback";
+  $("#playFeedback").innerHTML = "ابدأ/ي بتوزيع 🍬 ثم اضغط/ي <b>تحقق</b>.";
+}
+
+$("#playType").addEventListener("change", ()=>{
+  $("#playBLabel").textContent =
+    $("#playType").value==="share"
+    ? "عدد المجموعات/الأشخاص (المقسوم عليه)"
+    : "حجم المجموعة (المقسوم عليه)";
+});
+$("#btnStartPlay").addEventListener("click", setupPlay);
+
+$("#btnResetPlay").addEventListener("click", ()=>{
+  playState.started = false;
+  clearNode($("#tray"));
+  clearNode($("#buckets"));
+  $("#playFeedback").className = "feedback";
+  $("#playFeedback").textContent = "اضغط/ي ابدأ لبدء اللعب.";
+  updatePlayEq();
+});
+
+$("#btnAutoDistribute").addEventListener("click", ()=>{
+  if(!playState.started) return toast("ابدأ/ي أولًا بالضغط على ابدأ.");
+  const a = playState.a, b = playState.b;
+
+  const tray = $("#tray");
+  playState.items.forEach(it=>tray.appendChild(it));
+
+  const bucketZones = playState.buckets.map(x=>x.dz);
+  if(bucketZones.length===0) return;
+
+  if(playState.type==="share"){
+    let idx = 0;
+    playState.items.forEach(it=>{
+      bucketZones[idx % b]?.appendChild(it);
+      idx++;
+    });
+  }else{
+    let k = 0;
+    const fullGroups = Math.floor(a/b);
+    for(let g=0; g<fullGroups; g++){
+      for(let t=0; t<b; t++){
+        const it = playState.items[k++];
+        if(it && bucketZones[g]) bucketZones[g].appendChild(it);
+      }
+    }
+  }
+
+  updateBucketCounts();
+  toast("تم التوزيع تلقائيًا 🤖");
+});
+
+$("#btnCheckPlay").addEventListener("click", ()=>{
+  if(!playState.started) return toast("ابدأ/ي أولًا بالضغط على ابدأ.");
+
+  const a = playState.a, b = playState.b;
+  const {q,r} = computeDivision(a,b);
+
+  const trayCount = $("#tray").children.length;
+  let ok = false;
+  let msg = "";
+
+  if(playState.type==="share"){
+    const allBuckets = $$("#buckets .dropzone").slice(0, b);
+    const goodBuckets = allBuckets.every(z => z.children.length === q);
+    ok = goodBuckets && (trayCount === r);
+    msg = ok
+      ? `✅ توزيع صحيح: كل مجموعة فيها ${toArabicDigits(q)} والباقي ${toArabicDigits(r)}.`
+      : `جرّب/ي مرة أخرى: الهدف أن تكون كل مجموعة ${toArabicDigits(q)} وأن يبقى ${toArabicDigits(r)} في الصندوق (الباقي).`;
+  }else{
+    const nonEmptyZones = $$("#buckets .dropzone").filter(z=>z.children.length>0);
+    const goodGroups = nonEmptyZones.every(z=>z.children.length===b) && (nonEmptyZones.length===q);
+    ok = goodGroups && (trayCount===r);
+    msg = ok
+      ? `✅ تكوين صحيح: ${toArabicDigits(q)} مجموعات، في كل مجموعة ${toArabicDigits(b)}، والباقي ${toArabicDigits(r)}.`
+      : `حاول/ي: نريد ${toArabicDigits(q)} مجموعات كاملة (كل واحدة ${toArabicDigits(b)}) ويبقى ${toArabicDigits(r)} في الصندوق.`;
+  }
+
+  const fb = $("#playFeedback");
+  fb.className = "feedback " + (ok ? "good" : "bad");
+  fb.innerHTML =
+    msg +
+    `<br>🔁 تحقق: ${toArabicDigits(b)} × ${toArabicDigits(q)} + ${toArabicDigits(r)} = ${toArabicDigits(b*q + r)}.` +
+    buildSubBoxHtml(a,b);
+
+  if(ok){
+    progress.stars += 1;
+    saveProgress();
+    toast("⭐ نجمة جديدة!");
+  }
+});
+
+/* =========================
+   QUIZ
+========================= */
+let qState = { current:null, answered:false, score:0, streak:0 };
+
+function pickDivisors(level){
+  if(level==="easy") return [2,5,10];
+  if(level==="mid") return [3,4,6,8];
+  return [7,8,9,10,11,12];
+}
+
+function makeQuestion(){
+  const level = $("#level").value;
+  const type = $("#qType").value;
+  const divs = pickDivisors(level);
+
+  const qtype = (type==="mix") ? ["fact","word","remainder"][randInt(0,2)] : type;
+
+  let b = divs[randInt(0, divs.length-1)];
+  let q, a, r = 0;
+
+  if(qtype==="remainder" || level==="hard"){
+    q = randInt(1, 9);
+    r = randInt(0, b-1);
+    a = b*q + r;
+    if(qtype!=="remainder" && r>0 && Math.random()<0.5) r = 0, a = b*q;
+  }else{
+    q = randInt(1, 10);
+    a = b*q;
+    r = 0;
+  }
+
+  let prompt = "", answerText = "", explanation = "";
+
+  if(qtype==="word"){
+    const contexts = [
+      {emoji:"🍬", item:"قطعة", group:"أشخاص"},
+      {emoji:"⭐", item:"نجمة", group:"مجموعات"},
+      {emoji:"🍎", item:"تفاحة", group:"أصدقاء"},
+      {emoji:"📚", item:"كتاب", group:"طلاب"}
+    ];
+    const c = contexts[randInt(0, contexts.length-1)];
+    prompt = `لدى المتعلم/ة ${toArabicDigits(a)} ${c.emoji} ويريد/تريد توزيعها بالتساوي على ${toArabicDigits(b)} ${c.group}. كم ${c.item} لكل واحد؟`;
+    answerText = toArabicDigits(q);
+    explanation =
+      `نقسم ${toArabicDigits(a)} على ${toArabicDigits(b)}.\n`+
+      `الناتج ${toArabicDigits(q)} لأن ${toArabicDigits(b)} × ${toArabicDigits(q)} = ${toArabicDigits(a)}.`;
+  }else if(qtype==="remainder"){
+    prompt = `احسب/ي: ${toArabicDigits(a)} ÷ ${toArabicDigits(b)} (مع الباقي)`;
+    answerText = `${toArabicDigits(q)} والباقي ${toArabicDigits(r)}`;
+    explanation =
+      `نبحث عن أكبر مضاعف لـ ${toArabicDigits(b)} لا يتجاوز ${toArabicDigits(a)}.\n`+
+      `${toArabicDigits(b)} × ${toArabicDigits(q)} = ${toArabicDigits(b*q)} ويتبقى ${toArabicDigits(r)}.`;
+  }else{
+    prompt = `احسب/ي: ${toArabicDigits(a)} ÷ ${toArabicDigits(b)} = ؟`;
+    answerText = toArabicDigits(q);
+    explanation =
+      `لأن ${toArabicDigits(b)} × ${toArabicDigits(q)} = ${toArabicDigits(a)}.\n`+
+      `إذن الناتج = ${toArabicDigits(q)} والباقي ٠.`;
+  }
+
+  const options = new Set();
+  options.add(answerText);
+
+  while(options.size<4){
+    if(qtype==="remainder"){
+      const q2 = clamp(q + randInt(-2,2), 0, 12);
+      const r2 = clamp(r + randInt(-2,2), 0, b-1);
+      options.add(`${toArabicDigits(q2)} والباقي ${toArabicDigits(r2)}`);
+    }else{
+      const d = clamp(q + randInt(-3,3), 0, 12);
+      options.add(toArabicDigits(d));
+    }
+  }
+
+  const optArr = Array.from(options);
+  for(let i=optArr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [optArr[i], optArr[j]] = [optArr[j], optArr[i]];
+  }
+
+  return { prompt, answer: answerText, options: optArr, explanation, meta:{a,b,q,r,qtype} };
+}
+
+function setQuizUI(q){
+  qState.current = q;
+  qState.answered = false;
+  $("#qText").textContent = q.prompt;
+
+  const optionsEl = $("#options");
+  clearNode(optionsEl);
+
+  q.options.forEach(text=>{
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.textContent = text;
+    b.addEventListener("click", ()=>chooseOption(text));
+    optionsEl.appendChild(b);
+  });
+
+  $("#qFeedback").className = "feedback";
+  $("#qFeedback").textContent = "اختر/ي إجابة… ثم سيظهر شرح الحل ✨";
+}
+
+function chooseOption(chosen){
+  if(qState.answered || !qState.current) return;
+  qState.answered = true;
+
+  const correct = qState.current.answer;
+  const all = $$("#options .opt");
+
+  all.forEach(o=>{
+    if(o.textContent===correct) o.classList.add("correct");
+    if(o.textContent===chosen && chosen!==correct) o.classList.add("wrong");
+    o.disabled = true;
+  });
+
+  const ok = (chosen===correct);
+  const meta = qState.current.meta;
+
+  if(ok){
+    qState.score += 1;
+    qState.streak += 1;
+    progress.stars += 1;
+    progress.score += 1;
+    progress.solved += 1;
+    progress.bestStreak = Math.max(progress.bestStreak, qState.streak);
+    toast("⭐ إجابة صحيحة!");
+    $("#qFeedback").className = "feedback good";
+  }else{
+    progress.solved += 1;
+    qState.streak = 0;
+    $("#qFeedback").className = "feedback bad";
+  }
+
+  const explLines = [];
+  explLines.push(ok ? "✅ إجابة صحيحة!" : "❌ ليست الإجابة الصحيحة.");
+  explLines.push(`الإجابة الصحيحة: ${correct}`);
+  explLines.push("—");
+  explLines.push(qState.current.explanation.replace(/\n/g,"<br>"));
+
+  const check = meta.b*meta.q + meta.r;
+  explLines.push(`<br>🔁 تحقق: ${toArabicDigits(meta.b)} × ${toArabicDigits(meta.q)} + ${toArabicDigits(meta.r)} = ${toArabicDigits(check)}.`);
+  if(meta.r>0) explLines.push(`📌 الباقي (${toArabicDigits(meta.r)}) أقل من المقسوم عليه (${toArabicDigits(meta.b)}).`);
+
+  if(meta.a <= 60){
+    explLines.push(buildSubBoxHtml(meta.a, meta.b));
+  }
+
+  $("#qFeedback").innerHTML = explLines.join("<br>");
+
+  $("#score").textContent = toArabicDigits(qState.score);
+  $("#streak").textContent = toArabicDigits(qState.streak);
+
+  saveProgress();
+}
+
+function updateStarBar(){
+  const pct = Math.min(100, (progress.stars % 10) * 10);
+  $("#starBar").style.width = pct + "%";
+}
+
+$("#btnNewQ").addEventListener("click", ()=>{
+  const q = makeQuestion();
+  setQuizUI(q);
+  $("#studentName").value = $("#studentName").value || progress.lastStudent || "";
+  updateStarBar();
+});
+
+$("#btnHint").addEventListener("click", ()=>{
+  if(!qState.current) return toast("ابدأ/ي بسؤال جديد أولًا.");
+  const m = qState.current.meta;
+  const hint =
+    (m.qtype==="remainder")
+    ? `💡 تلميح: ابحث/ي عن ${toArabicDigits(m.b)}×؟ قريب من ${toArabicDigits(m.a)} ثم احسب/ي الباقي.`
+    : `💡 تلميح: استخدم/ي الضرب: ${toArabicDigits(m.b)}×؟ = ${toArabicDigits(m.a)}.`;
+  toast(hint);
+});
+
+$("#btnReadQ").addEventListener("click", ()=>{
+  if(!qState.current) return toast("لا يوجد سؤال الآن.");
+  speak(qState.current.prompt.replace(/÷/g,"قسمة"));
+});
+
+/* =========================
+   MY: Export/Import/Reset
+========================= */
+$("#btnExport").addEventListener("click", ()=>{
+  const payload = JSON.stringify(progress, null, 2);
+  const blob = new Blob([payload], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "division-progress.json";
+  a.click();
+  URL.revokeObjectURL(url);
+  toast("تم تصدير JSON ✅");
+});
+
+$("#btnImport").addEventListener("click", ()=>$("#importInput").click());
+$("#importInput").addEventListener("change", (e)=>{
+  const f = e.target.files && e.target.files[0];
+  if(!f) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const obj = JSON.parse(String(reader.result||"{}"));
+      progress = { ...defaultProgress(), ...obj };
+      saveProgress();
+      toast("تم الاستيراد ✅");
+    }catch(err){
+      toast("ملف غير صالح.");
+    }
+  };
+  reader.readAsText(f);
+});
+
+$("#btnResetAll").addEventListener("click", ()=>{
+  if(!confirm("هل تريد/ين تصفير التقدم؟")) return;
+  progress = defaultProgress();
+  saveProgress();
+  toast("تم التصفير ✅");
+});
+
+/* =========================
+   Print Certificate
+========================= */
+$("#btnPrint").addEventListener("click", ()=>{
+  const name = ($("#studentName").value || progress.lastStudent || "—").trim();
+  const cls = ($("#className").value || progress.lastClass || "—").trim();
+  const note = ($("#note").value || progress.note || "—").trim();
+  const now = new Date();
+  const date = now.toLocaleDateString("ar-SA", {year:"numeric", month:"long", day:"numeric"});
+
+  $("#pName").textContent = name || "—";
+  $("#pClass").textContent = cls || "—";
+  $("#pStars").textContent = toArabicDigits(progress.stars);
+  $("#pSolved").textContent = toArabicDigits(progress.solved);
+  $("#pDate").textContent = date;
+  $("#pNote").textContent = note || "—";
+
+  progress.lastStudent = name;
+  progress.lastClass = cls;
+  progress.note = note;
+  saveProgress();
+
+  window.print();
+});
+
+/* =========================
+   Sync UI
+========================= */
+function syncProgressUI(){
+  $("#starsChip").textContent = toArabicDigits(progress.stars);
+
+  $("#myStars").textContent = toArabicDigits(progress.stars);
+  $("#mySolved").textContent = toArabicDigits(progress.solved);
+  $("#myBest").textContent = toArabicDigits(progress.bestStreak);
+
+  if($("#studentName").value.trim()==="") $("#studentName").value = progress.lastStudent || "";
+  if($("#className").value.trim()==="") $("#className").value = progress.lastClass || "";
+  if($("#note").value.trim()==="") $("#note").value = progress.note || "";
+
+  updateStarBar();
+}
+$("#studentName").addEventListener("input", ()=>{ progress.lastStudent = $("#studentName").value.trim(); saveProgress(); });
+$("#className").addEventListener("input", ()=>{ progress.lastClass = $("#className").value.trim(); saveProgress(); });
+$("#note").addEventListener("input", ()=>{ progress.note = $("#note").value.trim(); saveProgress(); });
+
+/* =========================
+   Init
+========================= */
+updateLearnEq();
+syncProgressUI();
+renderSubStepsBox(clamp(Number($("#learnA").value||0),0,200), clamp(Number($("#learnB").value||1),1,20));
+</script>
+</body>
+</html>
